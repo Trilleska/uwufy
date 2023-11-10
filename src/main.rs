@@ -1,11 +1,20 @@
 // TRILLESKA > UWUFY
 // See README.TXT for usage directions and info.
 
-use std::env;
 use std::error::Error;
 use std::fs;
+use clap::Parser;
 use regex::Regex;
 // see also: https://docs.rs/regex/latest/regex/
+
+// arguments
+#[derive(Parser, Debug)]
+#[command(author, version, about, long_about = None)]
+struct Args {
+    #[arg(short = 'f', long = "file")]
+    file: String,
+}
+
 
 // read a file
 fn uwufy(filename: String) -> Result<String, Box<dyn Error>> {
@@ -16,22 +25,15 @@ fn uwufy(filename: String) -> Result<String, Box<dyn Error>> {
 }
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let option = &args[1];
-    let file = &args[2];
+    let args = Args::parse();
 
-    if option == "-h" {
-        println!("usage: uwufy -f [FILE_PATH]\n");
-        std::process::exit(0);
-    } else if option == "-f" {
-        match uwufy(file.to_string()) {
-            Ok(uwufied) => {
-                println!("{}", uwufied);
-                std::process::exit(0);
-            }
-            Err(err) => {
-                eprintln!("Error: {}", err);
-            }
+    match uwufy(args.file.to_string()) {
+        Ok(uwufied) => {
+            println!("{}", uwufied);
+            std::process::exit(0);
+        }
+        Err(err) => {
+            eprintln!("Error: {}", err);
         }
     }
 }
